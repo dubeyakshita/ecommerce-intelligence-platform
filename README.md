@@ -1,171 +1,158 @@
-📦 E-Commerce Intelligence Platform
+# 📦 E-Commerce Intelligence Platform  
+*A Modern ELT Data Engineering Project using Docker, PostgreSQL & dbt*
 
-A Modern ELT Data Engineering Project using Docker, PostgreSQL & dbt
+---
 
-🚀 Overview
+## 🚀 Overview
 
 This project implements a layered ELT data warehouse for an e-commerce dataset (Olist Brazilian E-Commerce dataset).
 
 The objective is to design a production-style analytics architecture using modern data engineering tools:
 
-Containerized infrastructure
-
-Raw → Staging → Mart modeling
-
-Modular transformations with dbt
-
-Data quality testing
-
-Dependency-based orchestration
+- Containerized infrastructure
+- Raw → Staging → Mart modeling
+- Modular transformations with dbt
+- Data quality testing
+- Dependency-based orchestration
 
 This project serves as a portfolio-ready demonstration of end-to-end data engineering workflow.
 
-🏗 Architecture
-        ┌────────────┐
-        │   RAW      │   (Ingested CSV Data)
-        └─────┬──────┘
-              │
-              ▼
-        ┌────────────┐
-        │  STAGING   │   (Cleaned, typed, standardized tables)
-        └─────┬──────┘
-              │
-              ▼
-        ┌────────────┐
-        │    MART    │   (Fact & Dimension models)
-        └────────────┘
+---
 
-Layers
-1️⃣ Raw Layer
+## 🏗 Architecture
 
-Data loaded into PostgreSQL using Python ingestion scripts
+    RAW (CSV Data)
+         ↓
+    STAGING (Cleaned & Standardized)
+         ↓
+    MART (Fact & Dimension Models)
 
-No transformation logic
 
-Mirrors source CSV schema
+### Layers
 
-2️⃣ Staging Layer (dbt models)
+### 1️⃣ Raw Layer
+- Data loaded into PostgreSQL using Python ingestion scripts
+- No transformation logic
+- Mirrors source CSV schema
 
-Column renaming
+### 2️⃣ Staging Layer (dbt models)
+- Column renaming
+- Type casting
+- Standardization
+- Clean interface between raw and analytics layer
 
-Type casting
-
-Standardization
-
-Clean interface between raw and analytics layer
-
-3️⃣ Mart Layer (dbt models)
-
-fact_orders
-
-dim_customers
-
-dim_products
+### 3️⃣ Mart Layer (dbt models)
+- `fact_orders`
+- `dim_customers`
+- `dim_products`
 
 Implements star-schema style modeling for analytical queries.
 
-🔄 Data Lineage (dbt DAG)
+---
 
-The entire transformation workflow is dependency-driven using ref() in dbt.
+## 🔄 Data Lineage (dbt DAG)
 
-Raw sources declared using source()
+The transformation workflow is dependency-driven using `ref()` in dbt.
 
-Staging models depend on raw tables
+- Raw sources declared using `source()`
+- Staging models depend on raw tables
+- Mart models depend on staging models
+- dbt builds models in correct order automatically
 
-Mart models depend on staging models
-
-dbt builds models in correct order automatically
-
-The project includes full dbt documentation and lineage graph via:
+Generate documentation with:
 
 dbt docs generate
 dbt docs serve
 
-🧪 Data Quality Testing
+
+## 🧪 Data Quality Testing
 
 Data integrity is enforced using dbt tests:
 
-not_null
-
-unique
-
-relationships (foreign key validation)
-
-Example:
-
-fact_orders.order_id → unique & not null
-
-fact_orders.customer_id → validated against stg_customers
+- `not_null`
+- `unique`
+- `relationships` (foreign key validation)
 
 Run tests using:
 
 dbt test
 
-🛠 Tech Stack
 
-Python 3.11
+## 🛠 Tech Stack
 
-Docker & Docker Compose
+- Python 3.11
+- Docker & Docker Compose
+- PostgreSQL 15
+- dbt (Postgres adapter)
+- VS Code
 
-PostgreSQL 15
+---
 
-dbt (Postgres adapter)
-
-VS Code
-
-📁 Project Structure
+## 📁 Project Structure
 ecommerce-intelligence-platform/
 │
 ├── docker-compose.yml
 ├── ingestion/
-│   └── load_raw_tables.py
+│ └── load_raw_tables.py
 │
 ├── data/
-│   └── (Olist dataset CSV files)
+│ └── (Olist dataset CSV files)
 │
 ├── ecommerce_dbt/
-│   ├── dbt_project.yml
-│   ├── models/
-│   │   ├── staging/
-│   │   └── marts/
-│   └── ...
+│ ├── dbt_project.yml
+│ ├── models/
+│ │ ├── staging/
+│ │ └── marts/
+│ └── ...
 │
 └── README.md
 
-⚙️ How to Run Locally
-1️⃣ Start PostgreSQL via Docker
+
+## ⚙️ How to Run Locally
+
+### 1️⃣ Start PostgreSQL via Docker
+
 docker compose up -d
 
-2️⃣ Load Raw Data
+
+### 2️⃣ Load Raw Data
+
 python ingestion/load_raw_tables.py
 
-3️⃣ Run dbt Transformations
+
+### 3️⃣ Run dbt Transformations
+
 cd ecommerce_dbt
 dbt run
 
-4️⃣ Run Data Tests
+
+### 4️⃣ Run Data Tests
+
 dbt test
 
-5️⃣ View Lineage Graph
+
+### 5️⃣ View Lineage Graph
+
+
+### 5️⃣ View Lineage Graph
+
 dbt docs generate
 dbt docs serve
 
-📊 Analytical Capabilities
+
+## 📊 Analytical Capabilities
 
 The mart layer supports:
 
-Total revenue by month
-
-Customer lifetime value
-
-Product-level performance
-
-Order-level revenue breakdown
-
-Review score aggregation
+- Monthly revenue analysis
+- Customer lifetime value
+- Product-level performance
+- Order-level revenue breakdown
+- Review score aggregation
 
 Example Query:
 
+```sql
 SELECT
     DATE_TRUNC('month', order_purchase_ts) AS month,
     SUM(total_order_value) AS monthly_revenue
@@ -173,7 +160,7 @@ FROM mart.fact_orders
 GROUP BY month
 ORDER BY month;
 
-🎯 Key Engineering Concepts Demonstrated
+## 🎯 Key Engineering Concepts Demonstrated
 
 Layered data warehouse architecture
 
@@ -191,7 +178,7 @@ Data quality enforcement
 
 Reproducible builds
 
-🔜 Next Phase
+## 🔜 Next Phase
 
 Planned Phase 2 extension:
 
@@ -205,7 +192,7 @@ ML model training using warehouse outputs
 
 Model output reintegration into analytics layer
 
-👩‍💻 Author
+## 👩‍💻 Author
 
 Akshita Dubey
 Berlin, Germany
