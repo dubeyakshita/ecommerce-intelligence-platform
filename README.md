@@ -159,6 +159,7 @@ SELECT
 FROM mart.fact_orders
 GROUP BY month
 ORDER BY month;
+```
 
 ## 🎯 Key Engineering Concepts Demonstrated
 
