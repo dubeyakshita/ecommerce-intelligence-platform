@@ -89,6 +89,7 @@ dbt test
 ---
 
 ## 📁 Project Structure
+```
 ecommerce-intelligence-platform/
 │
 ├── docker-compose.yml
@@ -106,7 +107,7 @@ ecommerce-intelligence-platform/
 │ └── ...
 │
 └── README.md
-
+```
 
 ## ⚙️ How to Run Locally
 
