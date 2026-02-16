@@ -163,37 +163,27 @@ ORDER BY month;
 
 ## 🎯 Key Engineering Concepts Demonstrated
 
-Layered data warehouse architecture
-
-ELT pattern (not ETL)
-
-Containerized infrastructure
-
-Modular transformation modeling
-
-Dependency management with dbt ref()
-
-Source declarations
-
-Data quality enforcement
-
-Reproducible builds
+- Layered data warehouse architecture
+- ELT pattern (not ETL)
+- Containerized infrastructure
+- Modular transformation modeling
+- Dependency management with dbt ref()
+- Source declarations
+- Data quality enforcement
+- Reproducible builds
 
 ## 🔜 Next Phase
 
 Planned Phase 2 extension:
 
-Feature engineering layer
-
-Customer segmentation
-
-Product recommendation system
-
-ML model training using warehouse outputs
-
-Model output reintegration into analytics layer
+- Feature engineering layer
+- Customer segmentation
+- Product recommendation system
+- ML model training using warehouse outputs
+- Model output reintegration into analytics layer
 
 ## 👩‍💻 Author
 
 Akshita Dubey
+
 Berlin, Germany
