@@ -173,15 +173,50 @@ ORDER BY month;
 - Data quality enforcement
 - Reproducible builds
 
-## 🔜 Next Phase
+## 🧠 Customer Segmentation (Phase 2A)
 
-Planned Phase 2 extension:
+# Objective
 
-- Feature engineering layer
-- Customer segmentation
-- Product recommendation system
-- ML model training using warehouse outputs
-- Model output reintegration into analytics layer
+Segment customers based on purchasing behavior using unsupervised learning.
+
+# Feature Engineering
+
+Customer-level features were created using dbt:
+
+- total_orders
+- total_revenue
+- avg_order_value
+- total_items
+- avg_review_score
+- recency_days
+
+# Transformations applied:
+
+- Log transformation (to handle skewed distributions)
+- Standard scaling
+
+# Model
+Algorithm: KMeans clustering
+K selection: Silhouette score (tested K=3 to 6)
+Best K: 4
+Silhouette Score: ~0.31
+
+# Results
+
+Identified customer segments based primarily on spending behavior:
+
+- Low-value customers
+- Mid-value customers
+- High-value customers
+
+# Key Insight
+
+Most customers in the dataset placed only one order, limiting behavioral segmentation depth. As a result, clustering was primarily driven by monetary features rather than frequency.
+
+# Output
+
+Segment assignments are stored in:
+mart.customer_segments
 
 ## 👩‍💻 Author
 

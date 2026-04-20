@@ -49,3 +49,6 @@ GROUP BY customer_id
 HAVING COUNT(DISTINCT order_id) > 1
 ORDER BY total_orders DESC;
 
+select * from mart.fact_orders limit 5;
+
+

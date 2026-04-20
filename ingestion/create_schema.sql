@@ -165,6 +165,33 @@ DROP SCHEMA mart CASCADE;
 CREATE SCHEMA staging;
 CREATE SCHEMA mart;
 
+select schema_name
+from information_schema.schemata;
+
+select table_schema, table_name
+from information_schema.tables
+where table_name = 'customer_segments';
+
+select segment_id, count(*) as customer_count
+from mart.customer_segments
+group by segment_id
+order by segment_id;
+
+select
+    segment_id,
+    avg(total_revenue) as avg_revenue,
+    avg(total_orders) as avg_orders,
+    avg(avg_order_value) as avg_order_value,
+    avg(recency_days) as avg_recency
+from analytics_mart.customer_features cf
+join mart.customer_segments cs
+    on cf.customer_id = cs.customer_id
+group by segment_id
+order by segment_id;
+
+
+
+
 
 
 

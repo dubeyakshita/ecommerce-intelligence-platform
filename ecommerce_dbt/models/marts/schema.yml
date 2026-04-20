@@ -21,3 +21,23 @@ models:
         tests:
           - not_null
           - unique
+
+  - name: customer_features
+    description: "Customer-level aggregated features for ML segmentation."
+    columns:
+      - name: customer_id
+        tests:
+          - not_null
+          - unique
+
+      - name: total_orders
+        tests:
+          - not_null
+
+      - name: total_revenue
+        tests:
+          - not_null
+
+      - name: recency_days
+        tests:
+          - not_null
