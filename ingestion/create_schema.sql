@@ -189,6 +189,16 @@ join mart.customer_segments cs
 group by segment_id
 order by segment_id;
 
+select is_churned, count(*)
+from analytics_mart.customer_churn_features
+group by is_churned;
+
+select
+    recent_orders,
+    recent_revenue
+from analytics_mart.customer_churn_features
+limit 100;
+
 
 
 

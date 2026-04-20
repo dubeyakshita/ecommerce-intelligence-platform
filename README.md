@@ -1,225 +1,259 @@
-# 📦 E-Commerce Intelligence Platform  
-*A Modern ELT Data Engineering Project using Docker, PostgreSQL & dbt*
+# 🛒 E-Commerce Intelligence Platform (DE + ML Project)
 
----
+## 📌 Overview
 
-## 🚀 Overview
+This project is an end-to-end **Data Engineering + Machine Learning platform** built on top of the Olist Brazilian E-Commerce dataset.
 
-This project implements a layered ELT data warehouse for an e-commerce dataset (Olist Brazilian E-Commerce dataset).
+It demonstrates how to:
 
-The objective is to design a production-style analytics architecture using modern data engineering tools:
-
-- Containerized infrastructure
-- Raw → Staging → Mart modeling
-- Modular transformations with dbt
-- Data quality testing
-- Dependency-based orchestration
-
-This project serves as a portfolio-ready demonstration of end-to-end data engineering workflow.
+- Build a structured data warehouse using **PostgreSQL + dbt**
+- Engineer features for analytics and ML
+- Implement **customer segmentation (unsupervised ML)**
+- Build a **churn prediction model (supervised ML)**
+- Store ML outputs back into the warehouse
 
 ---
 
 ## 🏗 Architecture
 
-    RAW (CSV Data)
-         ↓
-    STAGING (Cleaned & Standardized)
-         ↓
-    MART (Fact & Dimension Models)
 
+Raw CSV Data
+↓
+PostgreSQL (Docker)
+↓
+dbt (Staging → Mart Models)
+↓
+Feature Tables
+↓
+Python ML Pipelines
+↓
+Predictions written back to warehouse
+
+
+---
+
+## ⚙️ Tech Stack
+
+- **Data Warehouse**: PostgreSQL (Docker)
+- **Transformation**: dbt
+- **Programming**: Python
+- **ML Libraries**: scikit-learn, pandas
+- **Orchestration (manual)**: CLI-based workflow
+
+---
+
+## 📊 Data Modeling
 
 ### Layers
 
-### 1️⃣ Raw Layer
-- Data loaded into PostgreSQL using Python ingestion scripts
-- No transformation logic
-- Mirrors source CSV schema
+- **Raw Layer**
+  - CSV ingestion into PostgreSQL
 
-### 2️⃣ Staging Layer (dbt models)
-- Column renaming
-- Type casting
-- Standardization
-- Clean interface between raw and analytics layer
+- **Staging Layer (dbt)**
+  - Data cleaning and standardization
 
-### 3️⃣ Mart Layer (dbt models)
-- `fact_orders`
-- `dim_customers`
-- `dim_products`
-
-Implements star-schema style modeling for analytical queries.
+- **Mart Layer (dbt)**
+  - Star-schema inspired models:
+    - `fact_orders`
+    - `dim_customers`
+    - `customer_features`
 
 ---
 
-## 🔄 Data Lineage (dbt DAG)
+## 🧠 Phase 2A — Customer Segmentation
 
-The transformation workflow is dependency-driven using `ref()` in dbt.
+### 🎯 Objective
 
-- Raw sources declared using `source()`
-- Staging models depend on raw tables
-- Mart models depend on staging models
-- dbt builds models in correct order automatically
-
-Generate documentation with:
-
-dbt docs generate
-dbt docs serve
-
-
-## 🧪 Data Quality Testing
-
-Data integrity is enforced using dbt tests:
-
-- `not_null`
-- `unique`
-- `relationships` (foreign key validation)
-
-Run tests using:
-
-dbt test
-
-
-## 🛠 Tech Stack
-
-- Python 3.11
-- Docker & Docker Compose
-- PostgreSQL 15
-- dbt (Postgres adapter)
-- VS Code
+Segment customers based on purchasing behavior.
 
 ---
 
-## 📁 Project Structure
-```
-ecommerce-intelligence-platform/
-│
-├── docker-compose.yml
-├── ingestion/
-│ └── load_raw_tables.py
-│
-├── data/
-│ └── (Olist dataset CSV files)
-│
-├── ecommerce_dbt/
-│ ├── dbt_project.yml
-│ ├── models/
-│ │ ├── staging/
-│ │ └── marts/
-│ └── ...
-│
-└── README.md
-```
+### 🧾 Features Used
 
-## ⚙️ How to Run Locally
+- total_orders  
+- total_revenue  
+- avg_order_value  
+- total_items  
+- avg_review_score  
+- recency_days  
 
-### 1️⃣ Start PostgreSQL via Docker
+---
 
-docker compose up -d
+### ⚙️ Feature Engineering
+
+- Log transformation applied to handle skewed distributions
+- Standard scaling applied before clustering
+
+---
+
+### 🤖 Model
+
+- Algorithm: **KMeans Clustering**
+- K selection: Silhouette score (tested K=3 to 6)
+- Best K: **4**
+- Silhouette Score: ~**0.31**
+
+---
+
+### 📊 Results
+
+Identified customer segments primarily based on spending behavior:
+
+- Low-value customers  
+- Mid-value customers  
+- High-value customers  
+
+---
+
+### ⚠️ Key Insight
+
+Most customers in the dataset placed only **one order**, limiting segmentation depth.
+
+As a result, clustering was driven primarily by **monetary features** rather than frequency.
+
+---
+
+### 📤 Output
+
+Segment assignments stored in:
 
 
-### 2️⃣ Load Raw Data
-
-python ingestion/load_raw_tables.py
+mart.customer_segments
 
 
-### 3️⃣ Run dbt Transformations
+---
+
+## 🔮 Phase 2B — Churn Prediction
+
+### 🎯 Objective
+
+Predict whether a customer is likely to churn.
+
+---
+
+### 🧠 Churn Definition
+
+A customer is considered **churned** if:
+
+> No purchase in the last **90 days** relative to dataset's latest date.
+
+---
+
+### ⚠️ Important ML Challenge
+
+Initial model suffered from **data leakage**, producing perfect results.
+
+This was fixed by:
+
+- Separating **feature window (90–180 days)**  
+- From **churn window (last 90 days)**  
+
+---
+
+### 🧾 Features Used
+
+- total_orders  
+- total_revenue  
+- avg_order_value  
+- total_items  
+- avg_review_score  
+- recent_orders (90–180 days window)  
+- recent_revenue (90–180 days window)  
+
+---
+
+### 🤖 Model
+
+- Algorithm: **Logistic Regression**
+- Class imbalance handled using:
+  - `class_weight="balanced"`
+
+---
+
+### 📊 Results
+
+- ROC-AUC: **~0.64**
+- Model captures moderate predictive signal
+
+---
+
+### 🧠 Key Insight
+
+> After removing data leakage, model performance dropped to realistic levels, highlighting the importance of correct temporal feature engineering.
+
+---
+
+### 📤 Output
+
+Churn predictions stored in:
+
+
+mart.customer_churn_predictions
+
+
+---
+
+## 🔥 Key Learnings
+
+- Importance of **feature engineering over model complexity**
+- Handling **class imbalance** in real datasets
+- Detecting and fixing **data leakage**
+- Designing **time-aware ML pipelines**
+- Integrating ML outputs back into a data warehouse
+
+---
+
+## 🚀 How to Run the Project
+
+### 1. Start Infrastructure
+
+
+docker-compose up -d
+
+
+---
+
+### 2. Run dbt Models
+
 
 cd ecommerce_dbt
 dbt run
-
-
-### 4️⃣ Run Data Tests
-
 dbt test
 
 
-### 5️⃣ View Lineage Graph
+---
+
+### 3. Run ML Pipelines
+
+#### Segmentation
 
 
-### 5️⃣ View Lineage Graph
-
-dbt docs generate
-dbt docs serve
+python ml/train_segmentation.py
 
 
-## 📊 Analytical Capabilities
+#### Churn Prediction
 
-The mart layer supports:
 
-- Monthly revenue analysis
-- Customer lifetime value
-- Product-level performance
-- Order-level revenue breakdown
-- Review score aggregation
+python ml/train_churn.py
 
-Example Query:
 
-```sql
-SELECT
-    DATE_TRUNC('month', order_purchase_ts) AS month,
-    SUM(total_order_value) AS monthly_revenue
-FROM mart.fact_orders
-GROUP BY month
-ORDER BY month;
-```
+---
 
-## 🎯 Key Engineering Concepts Demonstrated
+## 📌 Future Improvements
 
-- Layered data warehouse architecture
-- ELT pattern (not ETL)
-- Containerized infrastructure
-- Modular transformation modeling
-- Dependency management with dbt ref()
-- Source declarations
-- Data quality enforcement
-- Reproducible builds
+- Add dashboard layer (Metabase / Superset)
+- Improve feature richness (product/category-level behavior)
+- Introduce model monitoring & retraining pipelines
+- Add orchestration (Airflow / Prefect)
 
-# 🧠 Customer Segmentation (Phase 2A)
+---
 
-## Objective
+## 🎯 Project Goal
 
-Segment customers based on purchasing behavior using unsupervised learning.
+This project is designed to demonstrate a **hybrid Data Engineer + ML Engineer skillset**, with a focus on:
 
-## Feature Engineering
+- Structured data modeling  
+- Feature engineering pipelines  
+- Production-style ML integration  
 
-Customer-level features were created using dbt:
-
-- total_orders
-- total_revenue
-- avg_order_value
-- total_items
-- avg_review_score
-- recency_days
-
-## Transformations applied:
-
-- Log transformation (to handle skewed distributions)
-- Standard scaling
-
-## Model
-Algorithm: KMeans clustering
-K selection: Silhouette score (tested K=3 to 6)
-Best K: 4
-Silhouette Score: ~0.31
-
-## Results
-
-Identified customer segments based primarily on spending behavior:
-
-- Low-value customers
-- Mid-value customers
-- High-value customers
-
-## Key Insight
-
-Most customers in the dataset placed only one order, limiting behavioral segmentation depth. As a result, clustering was primarily driven by monetary features rather than frequency.
-
-## Output
-
-Segment assignments are stored in:
-mart.customer_segments
-
-## 👩‍💻 Author
-
-Akshita Dubey
-
-Berlin, Germany
+---
