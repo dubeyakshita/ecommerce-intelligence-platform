@@ -16,19 +16,33 @@ It demonstrates how to:
 
 ## 🏗 Architecture
 
+[Raw Layer]
+CSV Files
 
-Raw CSV Data
 ↓
+
+[Storage Layer]
 PostgreSQL (Docker)
-↓
-dbt (Staging → Mart Models)
-↓
-Feature Tables
-↓
-Python ML Pipelines
-↓
-Predictions written back to warehouse
 
+↓
+
+[Transformation Layer]
+dbt (Staging → Mart)
+
+↓
+
+[Feature Layer]
+customer_features / customer_churn_features
+
+↓
+
+[ML Layer]
+Segmentation (KMeans) + Churn Prediction (Logistic Regression)
+
+↓
+
+[Serving Layer]
+Predictions stored back in PostgreSQL
 
 ---
 
