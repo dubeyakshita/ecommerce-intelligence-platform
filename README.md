@@ -173,13 +173,13 @@ ORDER BY month;
 - Data quality enforcement
 - Reproducible builds
 
-## 🧠 Customer Segmentation (Phase 2A)
+# 🧠 Customer Segmentation (Phase 2A)
 
-# Objective
+## Objective
 
 Segment customers based on purchasing behavior using unsupervised learning.
 
-# Feature Engineering
+## Feature Engineering
 
 Customer-level features were created using dbt:
 
@@ -190,18 +190,18 @@ Customer-level features were created using dbt:
 - avg_review_score
 - recency_days
 
-# Transformations applied:
+## Transformations applied:
 
 - Log transformation (to handle skewed distributions)
 - Standard scaling
 
-# Model
+## Model
 Algorithm: KMeans clustering
 K selection: Silhouette score (tested K=3 to 6)
 Best K: 4
 Silhouette Score: ~0.31
 
-# Results
+## Results
 
 Identified customer segments based primarily on spending behavior:
 
@@ -209,11 +209,11 @@ Identified customer segments based primarily on spending behavior:
 - Mid-value customers
 - High-value customers
 
-# Key Insight
+## Key Insight
 
 Most customers in the dataset placed only one order, limiting behavioral segmentation depth. As a result, clustering was primarily driven by monetary features rather than frequency.
 
-# Output
+## Output
 
 Segment assignments are stored in:
 mart.customer_segments
